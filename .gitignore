@@ -17,7 +17,6 @@ venv/
 # Logs and weights
 *.log
 *.pt
-*.onnx
 *.h5
 
 # Backup files
