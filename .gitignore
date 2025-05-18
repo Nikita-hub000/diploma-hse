@@ -1,0 +1,25 @@
+# OS and editor junk
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Python training files
+__pycache__/
+*.py[cod]
+*.pkl
+
+# Virtual environments
+venv/
+.env/
+
+# Logs and weights
+*.log
+*.pt
+*.onnx
+*.h5
+
+# Backup files
+*.bak
+*.swp

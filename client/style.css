@@ -1,0 +1,211 @@
+/* ---- Dracula-palette переменные ---- */
+:root {
+    --bg-1: #282a36;
+    --bg-2: #44475a;
+    --bg-3: #31344a;
+  
+    --fg-1: #f8f8f2;
+    --fg-2: #cfcfd6;
+  
+    --accent:        #bd93f9;
+    --accent-hover:  #caa9ff;
+    --accent-border: #6272a4;
+    --accent-glow:   rgba(189,147,249,.35);
+  }
+  
+  /* ---- Global ---- */
+  *, *::before, *::after { box-sizing: border-box; }
+  
+  html,body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Press Start 2P', monospace;
+    background: var(--bg-1);
+    color: var(--fg-1);
+    user-select: none;
+  }
+  
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: 12px;
+    padding: 14px;
+  }
+  
+  /* ---- Header ---- */
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-2);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 16px;
+    box-shadow: 0 0 14px var(--accent-glow);
+  }
+  
+  .logo {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--accent);
+    text-shadow: 0 0 2px var(--accent);
+  }
+  
+  .scoreboard {
+    display: flex;
+    gap: 18px;
+    margin: 8px 0;
+  }
+  
+  .score {
+    color: var(--accent);
+    font-size: .75rem;
+  }
+  .score span { color: var(--fg-1); }
+  
+  .difficulty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .65rem;
+  }
+  .difficulty label   { color: var(--fg-2); }
+  #difficultyRange    { accent-color: var(--accent); cursor: pointer; }
+  #difficultyLabel    { color: var(--accent); min-width: 48px; text-align: left; }
+  
+  /* ---- Main / Arena ---- */
+  .arena {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #gameCanvas {
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 3 / 2;
+    background: #000;
+    border: 2px solid var(--accent-border);
+    border-radius: 6px;
+  }
+  
+  .status-banner {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-3);
+    border: 1px solid var(--accent-border);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: .6rem;
+    color: var(--fg-2);
+    pointer-events: none;
+  }
+  
+  /* ---- Mobile paddle buttons (auto-hidden на desktop) ---- */
+  .mobile-pad {
+    position: absolute;
+    right: 4%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pad-btn {
+    padding: 14px 22px;
+    font-size: .9rem;
+    background: var(--bg-3);
+    color: var(--fg-1);
+    border: 2px solid var(--accent-border);
+    border-radius: 4px;
+  }
+  .pad-btn:active { background: var(--bg-2); transform: translateY(1px); }
+  
+  /* Показать на тач-экранах */
+  @media (hover:none) and (pointer:coarse),
+         (max-width:768px) {
+    .mobile-pad { display: flex; }
+  }
+  
+  /* ---- Toolbar ---- */
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+  }
+  
+  button {
+    font-family: inherit;
+    font-size: .7rem;
+    padding: 8px 16px;
+    background: var(--accent);
+    color: var(--bg-1);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color .2s, transform .1s;
+    box-shadow: 0 2px 5px rgba(0,0,0,.4);
+  }
+  button:hover   { background: var(--accent-hover); }
+  button:active  { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  button:disabled{
+    background: var(--accent-border);
+    color: var(--fg-2);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center;
+    font-size: .55rem;
+    color: var(--fg-2);
+  }
+  .footer p { margin: 4px 0; }
+
+  /* ─── Generic segmented-toggle (radio group) ─── */
+.segmented-toggle {
+    display: flex;
+    gap: 4px;
+    font-size: .55rem;
+  }
+  .segmented-toggle input[type="radio"] { display: none; }
+  
+  .segmented-toggle label {
+    padding: 4px 10px;
+    border: 1px solid var(--accent-border);
+    border-radius: 4px;
+    background: var(--bg-3);
+    color: var(--fg-2);
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s, color .15s;
+  }
+  .segmented-toggle label:hover {
+    background: var(--bg-2);
+    color: var(--fg-1);
+  }
+  .segmented-toggle input:checked + label {
+    background: var(--accent);
+    color: var(--bg-1);
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+  
+  /* компактное выравнивание на мобильных */
+  @media (max-width:600px) {
+    #modelTypeSwitch,
+    #difficultySwitch { flex: 1 1 100%; justify-content: center; margin-top: 6px; }
+  }
+  
+  
+  /* ---- Small screens ---- */
+  @media (max-width:600px) {
+    .logo         { font-size: .95rem; }
+    .difficulty   { flex: 1 1 100%; justify-content: center; margin-top: 8px; }
+    .scoreboard   { flex: 1 1 100%; justify-content: center; order: 3; }
+    button        { padding: 6px 12px; font-size: .6rem; }
+  }
+  

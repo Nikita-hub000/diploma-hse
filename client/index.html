@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Pong RL</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="header">
+      <h1 class="logo">PONG&nbsp;<span>RL</span></h1>
+
+      <section class="segmented-toggle" id="modelTypeSwitch">
+        <input type="radio" name="modelType" id="typeDqn" value="dqn" checked />
+        <label for="typeDqn">DQN</label>
+
+        <input type="radio" name="modelType" id="typePolicy" value="policy" />
+        <label for="typePolicy">POLICY</label>
+
+        <input type="radio" name="modelType" id="typeEs" value="es" checked />
+        <label for="typeDqn">ES</label>
+      </section>
+
+      <section class="scoreboard">
+        <div class="score">AI&nbsp;<span id="aiScore">0</span></div>
+        <div class="score">YOU&nbsp;<span id="playerScore">0</span></div>
+      </section>
+
+      <section class="segmented-toggle" id="difficultySwitch">
+        <input type="radio" name="aiLevel" id="lvlEasy" value="easy" />
+        <label for="lvlEasy">EASY</label>
+
+        <input type="radio" name="aiLevel" id="lvlMid" value="medium" />
+        <label for="lvlMid">MID</label>
+
+        <input type="radio" name="aiLevel" id="lvlHard" value="hard" checked />
+        <label for="lvlHard">HARD</label>
+      </section>
+    </header>
+
+    <main class="arena">
+      <canvas id="gameCanvas"></canvas>
+
+      <div id="statusBanner" class="status-banner">Loading resources…</div>
+
+      <div class="mobile-pad">
+        <button id="padUp" class="pad-btn">▲</button>
+        <button id="padDown" class="pad-btn">▼</button>
+      </div>
+    </main>
+
+    <aside class="toolbar">
+      <button id="btnPlay">Play</button>
+      <button id="btnReset" disabled>Reset</button>
+    </aside>
+
+    <footer class="footer">
+      <p>Space — Play/Pause · W/S — paddle · R — reset</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <script src="pong_env.js"></script>
+    <script type="module" src="const.js"></script>
+    <script type="module" src="agent.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
