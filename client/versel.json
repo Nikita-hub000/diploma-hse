@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "index.html",   "use": "@vercel/static" },
+      { "src": "style.css",    "use": "@vercel/static" },
+      { "src": "app.js",       "use": "@vercel/static" },
+      { "src": "dqn/*.onnx", "use": "@vercel/static" },
+      { "src": "policy/*.onnx", "use": "@vercel/static" },
+      { "src": "es/*.onnx", "use": "@vercel/static" }
+
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "/$1" }
+    ]
+  }
+  
