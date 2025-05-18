@@ -1,12 +1,3 @@
-# train_pong_dqn.py
-"""
-DQN-обучение Pong-агента (5-мерное состояние) + расширенный сбор метрик
-(те же, что и в train_reinforce.py — можно строить общие графики).
-
-Запуск:
-    python train_pong_dqn.py
-"""
-
 import os, random, time
 from collections import deque
 
@@ -41,7 +32,6 @@ LOAD_MODEL_FROM     = None
 
 
 def train_pong():
-    # reproducibility
     random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 
     env = PongEnv()
@@ -55,7 +45,6 @@ def train_pong():
         agent.load(LOAD_MODEL_FROM)
         print(f"Loaded weights from {LOAD_MODEL_FROM}")
 
-    # ── логи
     returns_hist, wins_hist, lens_hist, steps_hist, loss_hist = [], [], [], [], []
     win100 = deque(maxlen=100)
 
@@ -91,7 +80,6 @@ def train_pong():
 
             if done: break
 
-        # ── метрики эпизода
         win = 1 if ep_ret > 0 else 0
         win100.append(win)
 
@@ -105,20 +93,17 @@ def train_pong():
         avg_win_100    = np.mean(wins_hist[-100:])
         avg_len_100    = np.mean(lens_hist[-100:])
 
-        # ── печать
         if ep % PRINT_EVERY == 0:
             print(f"Ep {ep:5d} | R {ep_ret:+5.2f} | Len {ep_len:4d} | "
                   f"AvgR100 {avg_return_100:+.3f} | Win100 {avg_win_100:5.1%} | "
                   f"Eps {eps:.3f} | Loss {loss_hist[-1]:.4f} | "
                   f"Steps {total_steps:7d} | {time.time()-t0:6.1f}s")
 
-        # ── сохранение лучшей модели
         if len(returns_hist) >= 100 and avg_return_100 > best_avg100:
             best_avg100 = avg_return_100
             agent.save(MODEL_SAVE_PATH)
             print(f"★  New best avgReturn100 = {best_avg100:.3f} → saved to {MODEL_SAVE_PATH}")
 
-        # ── solved?
         if (solved_at_steps is None
                 and len(returns_hist) >= 100
                 and avg_return_100 >= TARGET_AVG_RETURN):

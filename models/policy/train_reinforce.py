@@ -1,8 +1,3 @@
-# train_reinforce.py
-"""
-On-policy обучение Pong-агента (REINFORCE с baseline-критиком)
-"""
-
 import random, time, os
 from collections import deque
 

@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import random
-import copy # Needed for target network deep copy
 from replay_buffer import ReplayBuffer
 from model import QNetwork
 
@@ -31,38 +30,34 @@ class DQNAgent:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
         print(f"Using device: {self.device}")
 
-        # Q-networks (using DDQN logic) - Pass hidden_dim
         self.qnet = QNetwork(state_dim, action_dim, hidden_dim).to(self.device)
         self.target_net = QNetwork(state_dim, action_dim, hidden_dim).to(self.device)
-        self.target_net.load_state_dict(self.qnet.state_dict()) # Initial sync
-        self.target_net.eval() # Target network is only for inference
+        self.target_net.load_state_dict(self.qnet.state_dict())
+        self.target_net.eval()
         self.optimizer = optim.Adam(self.qnet.parameters(), lr=lr)
 
-        # Replay buffer
         self.buffer = ReplayBuffer(buffer_size)
 
         self.step_count = 0
-        self.last_loss = None # To store loss for monitoring
+        self.last_loss = None 
 
     def select_action(self, state, epsilon: float):
         """Epsilon-greedy action selection."""
         if random.random() < epsilon:
             return random.randint(0, self.action_dim - 1)
         else:
-            # Ensure state is a numpy array before converting
             if not isinstance(state, np.ndarray):
                  state = np.array(state, dtype=np.float32)
 
             state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
-            self.qnet.eval() # Set to evaluation mode for inference
+            self.qnet.eval() 
             with torch.no_grad():
                 qvals = self.qnet(state)
-            self.qnet.train() # Set back to training mode
+            self.qnet.train() 
             return qvals.argmax().item()
 
     def step(self, state, action, reward, next_state, done):
         """Add experience and learn if conditions met."""
-        # Ensure state and next_state are NumPy arrays or compatible types
         self.buffer.push(np.array(state, dtype=np.float32),
                          action,
                          reward,
@@ -70,7 +65,6 @@ class DQNAgent:
                          done)
         self.step_count += 1
 
-        # Learn every update_freq steps if buffer has enough samples
         if self.step_count % self.update_freq == 0 and len(self.buffer) >= self.batch_size:
             self.learn()
 
@@ -79,16 +73,12 @@ class DQNAgent:
         """Update Q-network using a batch from the replay buffer (DDQN)."""
         states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
 
-        # Convert to tensors
         states      = torch.FloatTensor(states).to(self.device)
-        # Ensure actions are LongTensor for gather() and have the correct shape [batch_size, 1]
         actions     = torch.LongTensor(actions).unsqueeze(1).to(self.device)
-        # Ensure rewards and dones have shape [batch_size, 1]
         rewards     = torch.FloatTensor(rewards).unsqueeze(1).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
-        dones       = torch.FloatTensor(dones).unsqueeze(1).to(self.device) # Use float for multiplication
+        dones       = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
 
-        # --- DDQN Target Calculation ---
         with torch.no_grad():
             # 1. Select best actions using the online Q-network for next_states
             online_next_actions = self.qnet(next_states).argmax(1, keepdim=True) # [batch_size, 1]
@@ -105,13 +95,10 @@ class DQNAgent:
         loss = nn.MSELoss()(q_values, q_targets)
         self.optimizer.zero_grad()
         loss.backward()
-        # Optional: Gradient clipping
-        # torch.nn.utils.clip_grad_norm_(self.qnet.parameters(), max_norm=1.0)
         self.optimizer.step()
 
-        self.last_loss = loss.item() # Store loss
+        self.last_loss = loss.item() 
 
-        # --- Soft update target network ---
         self._soft_update_target_network()
 
     def _soft_update_target_network(self):

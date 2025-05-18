@@ -159,7 +159,6 @@
     transform: none;
   }
   
-  /* ---- Footer ---- */
   .footer {
     text-align: center;
     font-size: .55rem;
@@ -167,7 +166,6 @@
   }
   .footer p { margin: 4px 0; }
 
-  /* ─── Generic segmented-toggle (radio group) ─── */
 .segmented-toggle {
     display: flex;
     gap: 4px;
@@ -194,14 +192,12 @@
     box-shadow: 0 0 6px var(--accent-glow);
   }
   
-  /* компактное выравнивание на мобильных */
   @media (max-width:600px) {
     #modelTypeSwitch,
     #difficultySwitch { flex: 1 1 100%; justify-content: center; margin-top: 6px; }
   }
   
   
-  /* ---- Small screens ---- */
   @media (max-width:600px) {
     .logo         { font-size: .95rem; }
     .difficulty   { flex: 1 1 100%; justify-content: center; margin-top: 8px; }

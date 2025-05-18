@@ -7,7 +7,6 @@ import torch
 import torch.nn as nn
 
 class QNetwork(nn.Module):
-    """Simple Feedforward Q-Network."""
     def __init__(self, state_dim: int, action_dim: int, hidden_dim: int = 128):
         super().__init__()
         self.net = nn.Sequential(
@@ -28,17 +27,15 @@ class ESAgent:
         self.device = torch.device(device)
         self.net = QNetwork(state_dim, action_dim, hidden_dim).to(self.device)
 
-    # ---------- act ----------
     def select_action(self, state: np.ndarray) -> int:
         with torch.no_grad():
             logits = self.net(torch.as_tensor(state, dtype=torch.float32,
                                               device=self.device).unsqueeze(0))
         return int(torch.argmax(logits, dim=1).item())
 
-    def step(self, *_, **__):   # совместимость с DQN API
+    def step(self, *_, **__):  
         pass
 
-    # ---------- params utils ----------
     def get_flat_params(self) -> torch.Tensor:
         return torch.nn.utils.parameters_to_vector(self.net.parameters()).detach()
 
@@ -46,7 +43,6 @@ class ESAgent:
         """Записывает 1-D тензор параметров обратно в сеть"""
         torch.nn.utils.vector_to_parameters(flat.to(self.device), self.net.parameters())
 
-    # ---------- save / load ----------
     def save(self, path: str):
         torch.save(self.net.state_dict(), path)
 

@@ -1,9 +1,3 @@
-# reinforce_agent.py
-"""
-Actor-Critic (REINFORCE + baseline) для дискретного Pong (state-dim=5, action-dim=3).
-Совместим по API с вашим DQN/CQL: select_action, step, save, load, get_last_loss.
-"""
-
 from typing import List, Optional
 import numpy as np
 import torch
@@ -12,7 +6,6 @@ import torch.nn.functional as F
 
 
 class PolicyValueNet(nn.Module):
-    """Общая скрытая часть → две головы: policy-logits и value-скаляр."""
     def __init__(self, state_dim: int, action_dim: int, hidden: int = 128):
         super().__init__()
         self.shared = nn.Sequential(
@@ -26,15 +19,10 @@ class PolicyValueNet(nn.Module):
 
     def forward(self, x):
         h = self.shared(x)
-        return self.policy_head(h), self.value_head(h).squeeze(-1)  # logits, value
+        return self.policy_head(h), self.value_head(h).squeeze(-1)  
 
 
 class ReinforceAgent:
-    """
-    On-policy агент: копит trajectory → один апдейт в конце эпизода.
-    loss = −logπ(a|s)·A  +  ½·MSE(V, G).
-    """
-
     def __init__(
         self,
         state_dim: int,
@@ -52,37 +40,30 @@ class ReinforceAgent:
         self.net = PolicyValueNet(state_dim, action_dim, hidden_dim).to(self.device)
         self.optim = torch.optim.Adam(self.net.parameters(), lr=lr)
 
-        # buffers for current episode
         self.states:  List[np.ndarray] = []
         self.actions: List[int]        = []
         self.rewards: List[float]      = []
 
         self.last_loss: Optional[float] = None
 
-    # ---------- interaction ---------- #
     def select_action(self, state: np.ndarray) -> int:
-        """Возвращает action, сохраняет (s, a) в trajectory."""
         s_t = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
         logits, _ = self.net(s_t)
         probs = F.softmax(logits, dim=1)
         dist = torch.distributions.Categorical(probs)
         action = dist.sample().item()
 
-        # сохраняем
         self.states.append(state)
         self.actions.append(action)
         return action
 
     def step(self, reward: float, done: bool):
-        """Сохраняем reward; на конце эпизода запускаем update()."""
         self.rewards.append(reward)
         if done:
             self._update_policy()
             self._reset_episode()
 
-    # ---------- learning ---------- #
     def _discounted_returns(self) -> torch.Tensor:
-        """R_t  (обратный проход)."""
         R, out = 0.0, []
         for r in reversed(self.rewards):
             R = r + self.gamma * R
@@ -94,7 +75,6 @@ class ReinforceAgent:
         actions = torch.as_tensor(self.actions, dtype=torch.int64, device=self.device)
         returns = self._discounted_returns()
 
-        # нормализуем возврат для снижения дисперсии
         returns = (returns - returns.mean()) / (returns.std() + 1e-8)
 
         logits, values = self.net(states)
@@ -118,7 +98,6 @@ class ReinforceAgent:
         self.actions.clear()
         self.rewards.clear()
 
-    # ---------- utils ---------- #
     def save(self, path: str):
         torch.save(self.net.state_dict(), path)
 

@@ -5,7 +5,6 @@ rein = np.load("policy/log_reinforce.npz")
 plt.figure(figsize=(10,4))
 plt.plot(dqn["steps"],   dqn["returns"],   label="DQN ep-return",   alpha=.4)
 plt.plot(rein["steps"],  rein["returns"],  label="REINFORCE ep-return", alpha=.4)
-# сглаженные кривые
 win=100
 plt.plot(dqn["steps"][win-1:], np.convolve(dqn["returns"], np.ones(win)/win, 'valid'),
          label="DQN avg100", lw=2)

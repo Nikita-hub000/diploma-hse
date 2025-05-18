@@ -1,8 +1,3 @@
-# train_es.py
-"""
-Gradient-free Evolution Strategies для Pong 5-D.
-Сохраняет те же метрики (return / win / length / steps / reward).
-"""
 import time, random, os
 from collections import deque
 
@@ -18,7 +13,6 @@ METRICS_NPZ = "log_es-hard.npz"
 CURVE_PNG   = "es_training_curve-hard.png"
 
 def evaluate(agent: ESAgent, episodes=3) -> float:
-    """Средний return за N эпизодов (без шума)"""
     env, score = PongEnv(), 0.0
     for _ in range(episodes):
         state,_ = env.reset(); done=False
@@ -52,20 +46,17 @@ def train_es(
         noise = torch.randn(pop_size, num_params)
         rewards = torch.empty(pop_size)
 
-        # --- evaluate population ---
         for k in range(pop_size):
             agent.set_flat_params(theta + sigma * noise[k])
-            r = evaluate(agent, episodes=1)        # 1 эпизод / индивид
+            r = evaluate(agent, episodes=1)        
             rewards[k] = r
             env_steps_total += 3000               
 
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-8)
 
-        # --- gradient estimate ---
         grad = (noise.t() @ rewards) / (pop_size * sigma)
         theta += lr * grad
 
-        # --- logging ---
         agent.set_flat_params(theta)
         test_return = evaluate(agent, eval_eps)
         returns_hist.append(test_return)
