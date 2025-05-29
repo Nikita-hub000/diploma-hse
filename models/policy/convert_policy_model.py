@@ -4,8 +4,8 @@ ONNX-выход:  'action_logits' (shape [1,3]) — JS просто ищет arg
 """
 import os, torch, torch.onnx
 from reinforce_agent import PolicyValueNet   
-MODEL_PATH = "../../pong_reinforce.pth"
-ONNX_OUT   = "../../policy.onnx"
+MODEL_PATH = "../../policy/reinforce_medium.pth"
+ONNX_OUT   = "../../policy_mid.onnx"
 STATE_DIM  = 5
 ACTION_DIM = 3
 HIDDEN     = 128

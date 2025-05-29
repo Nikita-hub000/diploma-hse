@@ -5,9 +5,9 @@ export const MODELPATHS = {
     hard: './dqn/dqn-hard.onnx',
   },
   policy: {
-    easy: './policy/policy-easy.onnx',
-    medium: './policy/policy-medium.onnx',
-    hard: './policy/policy-hard.onnx',
+    easy: './policy/policy_easy.onnx',
+    medium: './policy/policy_mid.onnx',
+    hard: './policy/policy_hard.onnx',
   },
   es: {
     easy: './es/es-easy.onnx',

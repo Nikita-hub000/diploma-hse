@@ -5,11 +5,11 @@ import os
 from model import QNetwork
 
 
-MODEL_PATH = "../pong-medium.pth"
+MODEL_PATH = "../dqn/dqn_easy.pth"
 HIDDEN_DIM = 128
 STATE_DIM = 5
 ACTION_DIM = 3
-ONNX_OUTPUT_PATH = "../dqn-mid.onnx"
+ONNX_OUTPUT_PATH = "../dqn-easy-new.onnx"
 
 def convert_model():
     """Loads the PyTorch model and exports it to ONNX format."""

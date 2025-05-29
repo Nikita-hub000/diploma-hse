@@ -4,8 +4,8 @@ import torch
 import torch.onnx
 from es_agent import ESAgent         
 
-MODEL_PATH = "../../pong_es-hard.pth"   
-ONNX_OUT   = "../../es-hard.onnx"
+MODEL_PATH = "../../pong_es-easy.pth"   
+ONNX_OUT   = "../../es-easy.onnx"
 STATE_DIM  = 5
 ACTION_DIM = 3
 HIDDEN     = 128
