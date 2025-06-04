@@ -191,6 +191,10 @@
     color: var(--bg-1);
     box-shadow: 0 0 6px var(--accent-glow);
   }
+
+  .mobile {
+    display: none;
+  }
   
   @media (max-width:600px) {
     #modelTypeSwitch,
@@ -205,3 +209,22 @@
     button        { padding: 6px 12px; font-size: .6rem; }
   }
   
+
+  @media (max-width: 1000px) {
+    main {
+      display: none !important;
+    }
+    .header {
+      display: none;
+    }
+    aside {
+      display: none !important;
+    }
+    footer {
+      display: none !important;
+    }
+
+    .mobile {
+      display: block;
+    }
+  }

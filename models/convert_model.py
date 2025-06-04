@@ -12,8 +12,6 @@ ACTION_DIM = 3
 ONNX_OUTPUT_PATH = "../dqn-easy-new.onnx"
 
 def convert_model():
-    """Loads the PyTorch model and exports it to ONNX format."""
-
     print(f"Loading PyTorch model from: {MODEL_PATH}")
     if not os.path.exists(MODEL_PATH):
         print(f"Error: Model file not found at {MODEL_PATH}")

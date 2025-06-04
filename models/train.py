@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 from pong_env import PongEnv
 from dqn_agent import DQNAgent
 
-# ─── Гиперпараметры обучения ──────────────────────────────────────
 NUM_EPISODES        = 3000
 MAX_EPISODE_STEPS   = 3000
 BUFFER_SIZE         = 100_000
@@ -31,17 +30,15 @@ EPS_END             = 0.02
 EPS_DECAY_STEPS     = 300_000
 START_RANDOM_STEPS  = 5000
 
-# пороги, на которых фиксируем уровни сложности
 EASY_STEP           = 500_000
 MEDIUM_STEP         = 1_000_000
-HARD_STEP           = 1_900_000   # можно править
+HARD_STEP           = 1_900_000   
 
 TARGET_AVG_RETURN   = 0.5
 PRINT_EVERY         = 50
 RENDER_EVERY        = 0
 SEED                = 44
 
-# пути для сохранения
 SAVE_DIR            = "../dqn"
 os.makedirs(SAVE_DIR, exist_ok=True)
 SAVE_EASY           = os.path.join(SAVE_DIR, "dqn_easy.pth")
@@ -51,7 +48,6 @@ SAVE_HARD           = os.path.join(SAVE_DIR, "dqn_hard.pth")
 METRICS_NPZ         = "log_dqn.npz"
 CURVE_PNG           = "dqn_curve.png"
 LOAD_MODEL_FROM     = None
-# ──────────────────────────────────────────────────────────────────
 
 
 def train_pong() -> None:
@@ -98,7 +94,6 @@ def train_pong() -> None:
             state = next_state
             ep_ret += reward
 
-            # визуализация
             if render:
                 try: env.render()
                 except Exception:
@@ -107,7 +102,6 @@ def train_pong() -> None:
             if done:
                 break
 
-        # ── накопление метрик ───────────────────
         win = 1 if ep_ret > 0 else 0
         win100.append(win)
 
@@ -119,7 +113,6 @@ def train_pong() -> None:
 
         avg_return_100 = np.mean(returns_hist[-100:])
 
-        # ── вывод в консоль ─────────────────────
         if ep % PRINT_EVERY == 0:
             avg_win_100 = np.mean(wins_hist[-100:])
             print(f"Ep {ep:5d} | R {ep_ret:+5.2f} | Len {ep_len:4d} | "
@@ -127,13 +120,11 @@ def train_pong() -> None:
                   f"Eps {eps:.3f} | Loss {loss_hist[-1]:.4f} | "
                   f"Steps {total_steps:7d} | {time.time()-t0:6.1f}s")
 
-        # ── периодическое сохранение «лучшей» модели ──────────
         if len(returns_hist) >= 100 and avg_return_100 > best_avg100:
             best_avg100 = avg_return_100
-            agent.save(SAVE_HARD)   # hard перезаписывается «самым лучшим»
+            agent.save(SAVE_HARD)  
             print(f"★ New best avgR100 = {best_avg100:.3f} → saved to {SAVE_HARD}")
 
-        # ── чек-пойнты сложности ───────────────────────────────
         if not ckpt_flags["easy"] and total_steps >= EASY_STEP:
             agent.save(SAVE_EASY); ckpt_flags["easy"] = True
             print(f"[CKPT] easy-модель сохранена на {EASY_STEP:,} шагах → {SAVE_EASY}")
@@ -146,7 +137,6 @@ def train_pong() -> None:
             agent.save(SAVE_HARD); ckpt_flags["hard"] = True
             print(f"[CKPT] hard-модель сохранена на {HARD_STEP:,} шагах → {SAVE_HARD}")
 
-        # ── условие «решено» ───────────────────────────────────
         if (solved_at_steps is None and len(returns_hist) >= 100
                 and avg_return_100 >= TARGET_AVG_RETURN):
             solved_at_steps = total_steps
@@ -155,7 +145,6 @@ def train_pong() -> None:
 
     env.close()
 
-    # ── сохранение метрик и кривой ─────────────────────────────
     np.savez(METRICS_NPZ,
              returns=np.array(returns_hist),
              wins=np.array(wins_hist),

@@ -1,13 +1,3 @@
-"""
-train_reinforce.py  —  версия с чек-пойнтами сложности
-  • 0.5 М шагов  →  easy   (reinforce_easy.pth)
-  • 1.0 М шагов  →  medium (reinforce_medium.pth)
-  • 1.9 М шагов  →  hard   (reinforce_hard.pth)
-
-Сохраняет те же метрики, что и DQN-скрипт, в формате .npz:
-returns, wins, lengths, steps, losses
-"""
-
 import os, random, time
 from collections import deque
 
@@ -18,7 +8,6 @@ import matplotlib.pyplot as plt
 from pong_env import PongEnv
 from reinforce_agent import ReinforceAgent
 
-# ── гиперпараметры обучения ──────────────────────────────────────
 EPISODES          = 8000
 MAX_STEPS_PER_EP  = 3000
 GAMMA             = 0.99
@@ -27,7 +16,7 @@ HIDDEN_DIM        = 128
 
 EASY_STEP         = 500_000
 MEDIUM_STEP       = 1_000_000
-HARD_STEP         = 1_900_000       # или конец обучения
+HARD_STEP         = 1_900_000      
 
 TARGET_AVG_RETURN = 0.80
 PRINT_EVERY       = 50
@@ -42,7 +31,6 @@ SAVE_HARD         = os.path.join(SAVE_DIR, "reinforce_hard.pth")
 
 METRICS_NPZ       = "log_reinforce.npz"
 CURVE_PNG         = "reinforce_curve.png"
-# ─────────────────────────────────────────────────────────────────
 
 
 def main() -> None:
@@ -70,7 +58,7 @@ def main() -> None:
             action = agent.select_action(state)
             next_state, reward, done, _, _ = env.step(action)
 
-            agent.step(reward, done)          # внутреннее обновление
+            agent.step(reward, done)         
             state = next_state
             ep_ret += reward
             env_steps_total += 1
@@ -94,7 +82,6 @@ def main() -> None:
 
         avg_return_100 = np.mean(returns_hist[-100:])
 
-        # --- консольный вывод -----------------------------------
         if ep % PRINT_EVERY == 0:
             avg_win_100 = np.mean(wins_hist[-100:])
             print(f"Ep {ep:5d} | R {ep_ret:+5.2f} | Len {ep_len:4d} | "
@@ -102,7 +89,6 @@ def main() -> None:
                   f"Loss {loss_hist[-1]:.4f} | Steps {env_steps_total:7d} | "
                   f"{time.time()-t0:6.1f}s")
 
-        # --- чек-пойнты сложности -------------------------------
         if not ckpt_flags["easy"] and env_steps_total >= EASY_STEP:
             agent.save(SAVE_EASY); ckpt_flags["easy"] = True
             print(f"[CKPT] сохранили easy-уровень на {EASY_STEP:,} шагах → {SAVE_EASY}")
@@ -115,13 +101,11 @@ def main() -> None:
             agent.save(SAVE_HARD); ckpt_flags["hard"] = True
             print(f"[CKPT] сохранили hard-уровень на {HARD_STEP:,} шагах → {SAVE_HARD}")
 
-        # --- «лучшая» модель (по rolling-100) -------------------
         if len(returns_hist) >= 100 and avg_return_100 > best_avg100:
             best_avg100 = avg_return_100
-            agent.save(SAVE_HARD)      # hard-файл переопределяется
+            agent.save(SAVE_HARD)     
             print(f"★ New best avgR100 = {best_avg100:.3f} → saved to {SAVE_HARD}")
 
-        # --- условие «решено» -----------------------------------
         if (solved_at_steps is None and len(returns_hist) >= 100
                 and avg_return_100 >= TARGET_AVG_RETURN):
             solved_at_steps = env_steps_total
@@ -130,7 +114,6 @@ def main() -> None:
 
     env.close()
 
-    # --- сохранение метрик -------------------------------------
     np.savez(METRICS_NPZ,
              returns=np.array(returns_hist),
              wins=np.array(wins_hist),

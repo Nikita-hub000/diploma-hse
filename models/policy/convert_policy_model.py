@@ -1,7 +1,3 @@
-"""
-Экспорт обученной policy-сети (логиты действий) в ONNX.
-ONNX-выход:  'action_logits' (shape [1,3]) — JS просто ищет argmax.
-"""
 import os, torch, torch.onnx
 from reinforce_agent import PolicyValueNet   
 MODEL_PATH = "../../policy/reinforce_medium.pth"

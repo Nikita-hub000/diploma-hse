@@ -80,18 +80,12 @@ class DQNAgent:
         dones       = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
 
         with torch.no_grad():
-            # 1. Select best actions using the online Q-network for next_states
-            online_next_actions = self.qnet(next_states).argmax(1, keepdim=True) # [batch_size, 1]
-            # 2. Evaluate these actions using the target Q-network
-            target_next_q = self.target_net(next_states).gather(1, online_next_actions) # [batch_size, 1]
-            # 3. Compute the TD target
-            q_targets = rewards + (self.gamma * target_next_q * (1 - dones)) # dones is 0 or 1
-        # --- End DDQN ---
+            online_next_actions = self.qnet(next_states).argmax(1, keepdim=True)
+            target_next_q = self.target_net(next_states).gather(1, online_next_actions) 
+            q_targets = rewards + (self.gamma * target_next_q * (1 - dones))
 
-        # Compute current Q estimates for the actions actually taken
-        q_values = self.qnet(states).gather(1, actions) # [batch_size, 1]
+        q_values = self.qnet(states).gather(1, actions) 
 
-        # Loss & backprop
         loss = nn.MSELoss()(q_values, q_targets)
         self.optimizer.zero_grad()
         loss.backward()
@@ -119,8 +113,8 @@ class DQNAgent:
         """Loads the Q-network weights."""
         try:
             self.qnet.load_state_dict(torch.load(filename, map_location=self.device))
-            self.target_net.load_state_dict(self.qnet.state_dict()) # Sync target net
-            self.qnet.eval() # Set to eval mode after loading
+            self.target_net.load_state_dict(self.qnet.state_dict())
+            self.qnet.eval() 
             self.target_net.eval()
             print(f"--- Agent Q-network loaded from {filename} ---")
             return True
